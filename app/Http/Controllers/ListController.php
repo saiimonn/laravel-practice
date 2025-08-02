@@ -13,7 +13,7 @@ class ListController extends Controller
      */
     public function index()
     {
-        $lists = TaskList::where('user_id',auth()->id())->with('tasks')->get();
+        $lists = TaskList::where('user_id',auth()->id())->get();
         return Inertia::render('Lists/landing', [
             'lists' => $lists,
             'flash' => [
@@ -36,7 +36,15 @@ class ListController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description'=>'nullable|string'
+        ]);
+        TaskList::create([
+            ...$validated,
+            'user_id' => auth()->id()
+        ]);
+        return redirect()->route('lists.index')->with('success','List Created Successfully');
     }
 
     /**
@@ -58,16 +66,23 @@ class ListController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, TaskList $list)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string'
+        ]);
+
+        $list->update($validated);
+        return redirect()->route('lists.index')->with('success', 'List Updated Successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(TaskList $list)
     {
-        //
+        $list->delete();
+        return redirect()->route('lists.index')->with('List Deleted Successfully');
     }
 }
