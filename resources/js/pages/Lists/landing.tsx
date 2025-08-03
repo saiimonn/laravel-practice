@@ -146,7 +146,7 @@ const ListsIndex = ({lists, flash}:ListsIndexProps) => {
 
                                 <div className = "space-y-2">
                                     <Label htmlFor = "Description">Description</Label>
-                                    <Input 
+                                    <Textarea 
                                     id = "Description"
                                     value = {data.description}
                                     onChange = {(event) => setData('description', event.target.value)}
