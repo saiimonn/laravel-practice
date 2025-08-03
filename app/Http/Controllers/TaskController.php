@@ -36,10 +36,6 @@ class TaskController extends Controller
         return Inertia::render('Tasks/landing', [
             'tasks' => $tasks,
             'lists' => $lists,
-            'filter' => [
-                'search' => request('search', ''),
-                'filter' => request('filter', ''),
-            ],
             'flash' => [
                 'success' => session('success'),
                 'error' => session('error')

@@ -1,8 +1,6 @@
-import { Head, router } from "@inertiajs/react";
+import { Head} from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Pencil, Trash2, CheckCircle2, XCircle, Calendar, List, CheckCircle, Search, ChevronLeft, ChevronRight } from "lucide-react";
-import { Link } from "@inertiajs/react";
+import { Plus, Pencil, Trash2, List} from "lucide-react";
 import AppLayout from "@/layouts/app-layout";
 import { type BreadcrumbItem } from "@/types";
 import { useState, useEffect } from "react";
@@ -13,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "@inertiajs/react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { Table, TableCell, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface Task {
     id: number;
@@ -41,10 +40,6 @@ interface TasksIndexProps {
         total: number;
     };
     lists: List[];
-    filter: {
-        search: string;
-        filter: string;
-    };
     flash?: {
         success?: string;
         error?: string;
@@ -58,7 +53,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-const TasksIndex = ({tasks, lists, filter, flash}:TasksIndexProps) => {
+const TasksIndex = ({tasks, lists, flash}:TasksIndexProps) => {
     const [isOpen, setIsOpen] = useState(false)
     const [editingTask, setEditingTask] = useState<Task | null>(null)
     const [showToast, setShowToast] = useState(false)
@@ -222,6 +217,51 @@ const TasksIndex = ({tasks, lists, filter, flash}:TasksIndexProps) => {
                         </DialogContent>
                     </Dialog>
                 </div>
+                <Table className = "w-full">
+                    <TableHead>
+                        <TableRow className = "flex justify-between w-full">
+                            <TableCell>Title</TableCell>
+                            <TableCell>Description</TableCell>
+                            <TableCell>List</TableCell>
+                            <TableCell>Due Date</TableCell>
+                            <TableCell>Status</TableCell>
+                            <TableCell>Actions</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {tasks.data.map((task) => (
+                            <TableRow key = {task.id} className = " flex justify-between">
+                                <TableCell>{task.title}</TableCell>
+                                <TableCell>{task.description || 'No Description'}</TableCell>
+                                <TableCell>
+                                    <div className = "flex items-center gap-2">
+                                        <List className = "size-4 text-muted-foreground" />
+                                        {task.list.title}
+                                    </div>
+                                </TableCell>
+                                <TableCell>{task.due_date}</TableCell>
+                                <TableCell>{task.is_complete ? <h1 className = "text-green-400">Done</h1> : <h1 className = "text-yellow-400">Pending</h1>}</TableCell>
+                                <TableCell>
+                                    <Button
+                                        variant = "ghost"
+                                        size = "icon"
+                                        onClick = {() => handleEdit(task)}
+                                    >
+                                        <Pencil />
+                                    </Button>
+
+                                    <Button
+                                        variant = "ghost"
+                                        size = "icon"
+                                        onClick = {() => handleDelete(task.id)}
+                                    >
+                                        <Trash2 />
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
             </div>
         </AppLayout>
     )
